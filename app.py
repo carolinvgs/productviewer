@@ -54,8 +54,8 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 temp_image_dir = tempfile.mkdtemp(prefix="pv_images_")
 DEFAULT_EXCEL = "ProductGrid2025.xlsx"
-current_excel_path = None  # Don't auto-set to default file
-current_excel_filename = "None selected"
+current_excel_path = os.path.join(UPLOAD_FOLDER, DEFAULT_EXCEL)
+current_excel_filename = DEFAULT_EXCEL if os.path.exists(current_excel_path) else "None selected"
 
 all_products_data = []
 all_attributes = []
@@ -240,9 +240,9 @@ def run_server(port):
     server.serve_forever()
 
 if __name__ == "__main__":
-    # Don't auto-load default spreadsheet - let user upload their own files
-    # if current_excel_path:
-    #     load_and_parse_excel(current_excel_path)
+    # load default spreadsheet
+    if current_excel_path:
+        load_and_parse_excel(current_excel_path)
     try:
         port = find_free_port(5050, 5100)
     except RuntimeError as e:
