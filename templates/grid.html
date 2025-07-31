@@ -175,14 +175,21 @@
                      data-original-value="{{ product.original_attributes[attr] }}">
                   <small>
                     <strong>{{ attr.replace('ATT ', '') }}:</strong>
-                    <span class="attribute-value
-                                 {{ 'changed-attribute'
-                                    if product.attributes[attr]
-                                       != product.original_attributes[attr] else '' }}"
-                          data-attr-name="{{ attr }}"
-                          data-current-value="{{ product.attributes[attr] }}">
-                      {{ product.attributes[attr] }}
-                    </span>
+                    <select class="grid-attribute-select
+                                   {{ 'changed-attribute'
+                                      if product.attributes[attr]
+                                         != product.original_attributes[attr] else '' }}"
+                            data-attr-name="{{ attr }}"
+                            data-current-value="{{ product.attributes[attr] }}"
+                            data-original-value="{{ product.original_attributes[attr] }}"
+                            data-product-index="{{ product.original_index }}">
+                      {% for val in filter_options[attr] %}
+                        <option value="{{ val }}" {{ 'selected' if val == product.attributes[attr] else '' }}>{{ val }}</option>
+                      {% endfor %}
+                      {% if product.attributes[attr] not in filter_options[attr] %}
+                        <option value="{{ product.attributes[attr] }}" selected>{{ product.attributes[attr] }}</option>
+                      {% endif %}
+                    </select>
                   </small>
                 </div>
                 {% endfor %}

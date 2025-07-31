@@ -48,6 +48,7 @@ $(document).ready(function () {
     setupFileUpload();
     setupApplyChanges();
     setupDownloadButton();
+    setupGridAttributeDropdowns();
     setupModalListeners();
     setupSortFieldButtons();
   });
@@ -266,6 +267,58 @@ function setupApplyChanges() {
 function setupDownloadButton() {
     document.getElementById('downloadCurrentFileBtn')
       .addEventListener('click', () => window.location.href = '/download_current_grid');
+}
+
+// ----------------- GRID ATTRIBUTE DROPDOWNS -----------------
+
+function setupGridAttributeDropdowns() {
+    document.querySelectorAll('.grid-attribute-select').forEach(select => {
+        select.addEventListener('change', function() {
+            const productIndex = parseInt(this.dataset.productIndex);
+            const attrName = this.dataset.attrName;
+            const originalValue = this.dataset.originalValue;
+            const newValue = this.value;
+            
+            // Initialize pendingChanges for this product if it doesn't exist
+            if (!pendingChanges[productIndex]) {
+                pendingChanges[productIndex] = {};
+            }
+            
+            // Track the change if it's different from original
+            if (newValue !== originalValue) {
+                pendingChanges[productIndex][attrName] = newValue;
+                this.classList.add('changed-attribute');
+            } else {
+                // Remove from pending changes if reverted to original
+                delete pendingChanges[productIndex][attrName];
+                this.classList.remove('changed-attribute');
+                
+                // Clean up empty objects
+                if (Object.keys(pendingChanges[productIndex]).length === 0) {
+                    delete pendingChanges[productIndex];
+                }
+            }
+            
+            // Update the current value data attribute
+            this.dataset.currentValue = newValue;
+            
+            // Update the product data in memory
+            const product = PRODUCTS_DATA.find(p => p.original_index === productIndex);
+            if (product) {
+                product.attributes[attrName] = newValue;
+                
+                // Update the data attribute on the product element for filtering
+                const productEl = document.querySelector(`.product[data-product-index="${productIndex}"]`);
+                if (productEl) {
+                    const safeAttr = sanitizeAttr(attrName);
+                    productEl.setAttribute(`data-${safeAttr}`, newValue);
+                }
+            }
+            
+            // Re-apply filters to update visibility based on new values
+            applyFilters();
+        });
+    });
 }
 
 // ----------------- MODAL EDITING (INCLUDE DESCRIPTION & PRICE) -----------------
@@ -502,17 +555,17 @@ function updateMainGridView(productOriginalIndex) {
       }
     }
   
-    // --- OTHER ATTRIBUTES (unchanged) ---
-    el.querySelectorAll('.attribute-value').forEach(span => {
-      const attrName    = span.dataset.attrName;
+    // --- OTHER ATTRIBUTES ---
+    el.querySelectorAll('.grid-attribute-select').forEach(select => {
+      const attrName    = select.dataset.attrName;
       const newVal      = data.attributes[attrName];
       const originalVal = data.original_attributes[attrName];
-      span.textContent  = newVal;
-      span.dataset.currentValue = newVal;
+      select.value      = newVal;
+      select.dataset.currentValue = newVal;
       const safeKey = sanitizeAttr(attrName);
       el.setAttribute(`data-${safeKey}`, newVal);
-      if (newVal !== originalVal) span.classList.add('changed-attribute');
-      else span.classList.remove('changed-attribute');
+      if (newVal !== originalVal) select.classList.add('changed-attribute');
+      else select.classList.remove('changed-attribute');
     });
 
       
