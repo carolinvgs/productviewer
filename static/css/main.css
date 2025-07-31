@@ -298,6 +298,29 @@ label {
     font-weight: bold;
 }
 
+.grid-attribute-select {
+    width: 100%;
+    padding: 2px 4px;
+    font-size: 11px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: white;
+    font-family: inherit;
+}
+
+.grid-attribute-select.changed-attribute {
+    color: #B22222;
+    font-weight: bold;
+    border-color: #B22222;
+    background-color: #ffeaea;
+}
+
+.grid-attribute-select:focus {
+    outline: none;
+    border-color: #007cba;
+    box-shadow: 0 0 0 2px rgba(0, 124, 186, 0.2);
+}
+
 .action-buttons {
     margin-top: 20px;
     display: flex;
