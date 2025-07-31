@@ -240,9 +240,9 @@ def run_server(port):
     server.serve_forever()
 
 if __name__ == "__main__":
-    # load default spreadsheet
-    if current_excel_path:
-        load_and_parse_excel(current_excel_path)
+    # Don't auto-load default spreadsheet - let user upload their own files
+    # if current_excel_path:
+    #     load_and_parse_excel(current_excel_path)
     try:
         port = find_free_port(5050, 5100)
     except RuntimeError as e:
