@@ -54,8 +54,8 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 temp_image_dir = tempfile.mkdtemp(prefix="pv_images_")
 DEFAULT_EXCEL = "ProductGrid2025.xlsx"
-current_excel_path = os.path.join(UPLOAD_FOLDER, DEFAULT_EXCEL)
-current_excel_filename = DEFAULT_EXCEL if os.path.exists(current_excel_path) else "None selected"
+current_excel_path = None  # Don't auto-set to default file
+current_excel_filename = "None selected"
 
 all_products_data = []
 all_attributes = []
